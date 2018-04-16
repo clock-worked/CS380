@@ -1,14 +1,15 @@
-class PegGame:
-    def __init__(self, m=4, n=4):
+class Game:
+    def __init__(self, m=4, n=4, state=None):
         self.m = m
         self.n = n
         self.numPegs = m * n
         self.start = 9
-        self.boardState = None
 
-    def createGrid(self):
-        self.boardState = (pow(2, self.numPegs) - 1) - pow(2, self.start)
-        return self.boardState
+        if state:
+            self.boardState = state
+        else:
+            self.boardState = (pow(2, self.numPegs) - 1) - pow(2, self.start)
+
 
     def goal(self, state=None):
         if state == None:
@@ -47,44 +48,62 @@ class PegGame:
         # Right:        [04, 05, 06] x+1
         # Up-Right:     [13, 10, 07] x-m+1
         # Up-Left:      [10, 05, 00] x-m-1
-        # Down-Right:   [02, 05, 08] x+m-1
-        # Down-Left:    [05, 10, 15] x+m+1
+        # Down-Right:   [05, 10, 15] x+m+1
+        # Down-Left:    [02, 05, 08] x+m-1
 
         if state == None:
             state = self.boardState
 
         binState = format(state, '0' + str(self.numPegs) + 'b')
 
+        if self.precondition(rule=rule):
+            self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+
+
+    def precondition(self, rule, state=None):
+        # Assumes that all rules follow pattern: peg to be moved, peg to be jumped, empty peg slot
+        if state == None:
+            state = self.boardState
+
+        binState = format(state, '0' + str(self.numPegs) + 'b')
+
         try: # Check Peg values
-            if binState[(self.numPegs - 1) - rule[0]] == '1' and state[(self.numPegs - 1) - rule[1]] == '1' and state[(self.numPegs - 1) - rule[2]] == '0':
-                if (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[0] - rule[1]) == self.m: #up
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[0] + rule[1]) == self.m: #down
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[1] - rule[0]) == 1: #left
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[0] - rule[1]) == 1: #right
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[0] - rule[1]) == self.m + 1: #up-right
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[0] - rule[1]) == self.m - 1: #up-left
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[0] - rule[1]) + rule[1] == rule[2] and (rule[0] - rule[1]) == self.m - 1: #down-right
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
-                elif (rule[0] - rule[1]) + rule[1] == rule[2] and (rule[0] - rule[1]) == self.m + 1: #down-left
-                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-                    return self.boardState
+            if binState[(self.numPegs - 1) - rule[0]] == '1' and binState[(self.numPegs - 1) - rule[1]] == '1' and binState[(self.numPegs - 1) - rule[2]] == '0': #check for valid peg type
+                if rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == self.m and rule[0] / self.m >= 2: #up
+                    return True
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == self.m and rule[0] / self.m <= self.n - 3: #down
+                    return True
+                elif rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == 1 and rule[0] % self.m >= 2: #left
+                    return True
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == 1 and rule[0] % self.m <= 2: #right
+                    return True
+                elif rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == self.m - 1 and rule[0] / self.m >= 2 and rule[0] % self.m <= 2: #up-right
+                    return True
+                elif rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == self.m + 1 and rule[0] / self.m >= 2 and rule[0] % self.m >= 2: #up-left
+                    return True
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == self.m + 1 and rule[0] / self.m <= self.n - 3 and rule[0] % self.m <= 2: #down-right
+                    return True
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == self.m - 1 and rule[0] / self.m <= self.n - 3 and rule[0] % self.m >= 2: #down-left
+                    return True
+                else:
+                    return False
         except IndexError:
-            print "Invalid Arguement"
+            print "Invalid Rule: A rule parameter has an invalid index"
 
 
+    def applicableRules(self,state=None):
+        if state == None:
+            state = self.boardState
+
+        allRules = []
+
+        for i in range(self.numPegs):
+            for j in range(self.numPegs):
+                for k in range(self.numPegs):
+                    if self.precondition([i, j, k]):
+                        allRules.append([i, j, k])
+
+        return allRules
 
 
 
@@ -102,8 +121,11 @@ class PegGame:
                     print '|',
 
     # display numbers for board
-    def displayBoard(self):
-        for i, peg in enumerate(format(self.boardState, '0' + str(self.numPegs) + 'b')):
+    def describeState(self, state=None):
+        if state == None:
+            state = self.boardState
+
+        for i, peg in enumerate(format(state, '0' + str(self.numPegs) + 'b')):
            if int(i) % self.m == 0:
                 print ''
                 print '-' * (5 + (self.m * 3))
@@ -117,15 +139,12 @@ class PegGame:
 
         print ''
         print '-' * (5 + ((self.m - 1) * 4))
-def main():
-    game = PegGame()
-    # game.boardState = '0000001000000000b'
-    game.createGrid()
-    print game.goal(512)
-    game.refBoard()
-    # print game.goal()
-    game.displayBoard()
 
+    def describeRule(self, rule):
+        if len(rule) == 3:
+            print "The peg in slot {} jumps over the peg in slot {} and lands in slot {}.".format(rule[0], rule[1], rule[2])
+def main():
+    game = Game()
 
 if __name__ == '__main__':
     main()
