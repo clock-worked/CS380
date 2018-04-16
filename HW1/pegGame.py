@@ -3,21 +3,19 @@ class PegGame:
         self.m = m
         self.n = n
         self.numPegs = m * n
-        self.start = 10
-        self.boardState = ''
+        self.start = 9
+        self.boardState = None
 
     def createGrid(self):
-        self.boardState = format((pow(2, self.numPegs) - 1) - pow(2, self.start - 1), '0' + str(self.numPegs) + 'b')
-        return self.boardState[:-1]
+        self.boardState = (pow(2, self.numPegs) - 1) - pow(2, self.start)
+        return self.boardState
 
-    def goal(self, state=''):
-        if state == '':
+    def goal(self, state=None):
+        if state == None:
             state = self.boardState
-        elif state[-1:] == 'b':
-            state = state[:-1]
 
         # if there is one instance of '0' and it is in index self.start
-        if state.count('0') == self.numPegs - 1 and (len(state) - state.index('1')) - 1 == self.start:
+        if state == pow(2, self.start):
             return True
         else:
             return False
@@ -55,11 +53,13 @@ class PegGame:
         if state == '':
             state = self.boardState
 
-        try:
-            if (rule[0] - rule[1]) - rule[1] == rule[2] and state[len(state) - rule[2]] == '0':
-                return True
-        except IndexError:
-            print "Invalid Arguement"
+        # try:
+        #     if (rule[0] - rule[1]) - rule[1] == rule[2] and state[len(state) - rule[2]] == '0':
+        #         return
+        #     elif (rule[1] - rule[0]) + rule[1] == rule[2] and state[len(state) - rule[2]] == '0':
+        #
+        # except IndexError:
+        #     print "Invalid Arguement"
 
 
 
@@ -80,7 +80,7 @@ class PegGame:
 
     # display numbers for board
     def displayBoard(self):
-        for i, peg in enumerate(self.boardState):
+        for i, peg in enumerate(format(self.boardState, '0' + str(self.numPegs) + 'b')):
            if int(i) % self.m == 0:
                 print ''
                 print '-' * (5 + (self.m * 3))
@@ -98,6 +98,7 @@ def main():
     game = PegGame()
     # game.boardState = '0000001000000000b'
     game.createGrid()
+    print game.goal(512)
     game.refBoard()
     # print game.goal()
     game.displayBoard()
