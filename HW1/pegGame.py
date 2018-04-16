@@ -20,7 +20,7 @@ class PegGame:
         else:
             return False
 
-    def applyRule(self, rule, state=''):
+    def applyRule(self, rule, state=None):
         # ---------------------
         # | 15 | 14 | 13 | 12 |
         # ---------------------
@@ -45,21 +45,44 @@ class PegGame:
         # Down:         [01, 05, 09] x+m
         # Left:         [11, 10, 09] x-1
         # Right:        [04, 05, 06] x+1
-        # Up-Right:     [10, 05, 00] x-m-1
-        # Up-Left:      [13, 10, 07] x-m+1
-        # Down-Right:   [05, 10, 15] x+m+1
-        # Down-Left:    [02, 05, 08] x+m-1
+        # Up-Right:     [13, 10, 07] x-m+1
+        # Up-Left:      [10, 05, 00] x-m-1
+        # Down-Right:   [02, 05, 08] x+m-1
+        # Down-Left:    [05, 10, 15] x+m+1
 
-        if state == '':
+        if state == None:
             state = self.boardState
 
-        # try:
-        #     if (rule[0] - rule[1]) - rule[1] == rule[2] and state[len(state) - rule[2]] == '0':
-        #         return
-        #     elif (rule[1] - rule[0]) + rule[1] == rule[2] and state[len(state) - rule[2]] == '0':
-        #
-        # except IndexError:
-        #     print "Invalid Arguement"
+        binState = format(state, '0' + str(self.numPegs) + 'b')
+
+        try: # Check Peg values
+            if binState[(self.numPegs - 1) - rule[0]] == '1' and state[(self.numPegs - 1) - rule[1]] == '1' and state[(self.numPegs - 1) - rule[2]] == '0':
+                if (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[0] - rule[1]) == self.m: #up
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[0] + rule[1]) == self.m: #down
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[1] - rule[0]) == 1: #left
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[0] - rule[1]) == 1: #right
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[0] - rule[1]) == self.m + 1: #up-right
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[0] - rule[1]) - rule[1] == rule[2] and (rule[0] - rule[1]) == self.m - 1: #up-left
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[0] - rule[1]) + rule[1] == rule[2] and (rule[0] - rule[1]) == self.m - 1: #down-right
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+                elif (rule[0] - rule[1]) + rule[1] == rule[2] and (rule[0] - rule[1]) == self.m + 1: #down-left
+                    self.boardState = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+                    return self.boardState
+        except IndexError:
+            print "Invalid Arguement"
 
 
 
