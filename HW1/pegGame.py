@@ -1,9 +1,9 @@
 class Game:
-    def __init__(self, m=4, n=4, state=None):
+    def __init__(self, m=4, n=4, state=None, start=9):
         self.m = m
         self.n = n
         self.numPegs = m * n
-        self.start = 9
+        self.start = start
 
         if state:
             self.boardState = state

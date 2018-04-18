@@ -1,0 +1,44 @@
+The class of PegGame has several initial parameters:
+    - m [Defualt=4] columns of board, can be any int from 3-10
+    - n [Defualt=4] rows of board, can be any int from 3-10
+    - start [Defualt=9] initial empty peg for starting moves
+    - state [Defualt=None] state of the board in integer notation
+
+All moves made to the board state are done with arithmetic to the state. This integer is only
+converted to binary when displaying the board
+
+For all functions, arguements are not required unless you are trying to effect data other
+then that in the object.
+
+
+ALL RULES MUST BE ORDERED ACCORDINGLY:
+[peg to be moved, peg to be jumped, empty peg slot]
+
+So in the example board below an acceptable rule would be [13, 14, 15]
+        # ---------------------
+        # | 15 | 14 | 13 | 12 |
+        # ---------------------
+        # | 11 | 10 | 09 | 08 |
+        # ---------------------
+        # | 07 | 06 | 05 | 04 |
+        # ---------------------
+        # | 03 | 02 | 01 | 00 |
+        # ---------------------
+
+        # -----------------
+        # | O | X | X | X |
+        # -----------------
+        # | X | X | O | O |
+        # -----------------
+        # | O | O | X | X |
+        # -----------------
+        # | X | X | X | O |
+        # -----------------
+
+The program flailWildly does the following:
+Prints a reference board according the board size
+Prints the current board statea
+Lists all the possible moves
+Picks one at random and applys it
+finds all possible moves for new board
+REPEAT UNTIL NO MOVES OR WIN
