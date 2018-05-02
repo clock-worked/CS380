@@ -1,29 +1,38 @@
 from pegGame import Game
 import random
 
-game = Game()
-game.refBoard()
-allChoices = []
-selectedRules = []
-
-def backTrack(allChoices):
+def backTrack(selectedRules=[]):
     game.describeState()
     rules = game.applicableRules()
+
     for i, rule in enumerate(rules):
         print"{}:\t{}".format(i, rule)
     rule = random.choice(rules)
     game.describeRule(rule)
 
-    allChoices.append(rules)
-    selectedRules.append(rule)
+
+    if rule not in selectedRules:
+        selectedRules.append(rule)
 
 
-    if len(rules) == 1:
-        if game.goal() and game.softApplyRule(rule)
+    if len(rules) < 2:
+        if game.goal() and game.softApplyRule(rule):
             return rules
         else:
+            print "BackTracking..."
             selectedRules.pop()
-            allChoices
+    else:
+        game.applyRule(rule)
+
+    return backTrack(allChoices)
 
 
+
+
+
+
+game = Game()
+game.refBoard()
+allChoices = []
+backTrack(allChoices)
 

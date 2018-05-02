@@ -58,8 +58,9 @@ class Game:
         binState = format(state, '0' + str(self.numPegs) + 'b')
 
         if self.precondition(rule=rule):
-            results = self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
-        return results
+            return self.boardState - pow(2, rule[0]) - pow(2, rule[1]) + pow(2, rule[2])
+        else:
+            return None
 
     def applyRule(self, rule, state=None):
         # ---------------------
