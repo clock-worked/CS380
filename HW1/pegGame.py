@@ -114,9 +114,9 @@ class Game:
                     return True
                 elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == self.m and rule[0] / self.m <= self.n - 3: #down
                     return True
-                elif rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == 1 and rule[0] % self.m >= 2: #left
+                elif rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == 1 and rule[0] % self.m <= 2: #left
                     return True
-                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == 1 and rule[0] % self.m <= 2: #right
+                elif (rule[1] - rule[0]) + rule[1] == rule[2] and (rule[1] - rule[0]) == 1 and rule[0] % self.m >= 2: #right
                     return True
                 elif rule[1] - (rule[0] - rule[1]) == rule[2] and (rule[0] - rule[1]) == self.m - 1 and rule[0] / self.m >= 2 and rule[0] % self.m <= 2: #up-right
                     return True

@@ -1,49 +1,47 @@
 from pegGame import Game
-def backTrack(stateList):
-
+def backTrack(stateList, allRules=[]):
     state = stateList[0]
 
     if state in stateList[1:]:
-        return
+        stateList.pop(0)
+        return False
 
     #dead end
-    if state.applicableRules() == []:
-        return
+    if game.applicableRules(state) == []:
+        stateList.pop(0)
+        return False
 
-    if state.goal():
+    if game.applicableRules(state) < 2 and not game.goal(state):
+        return False
+
+    if game.goal(state):
         return None
 
     if len(stateList) > 20:
-        return
+        return False
 
-    state.describeState()
-    rules = game.applicableRules()
+
+    rules = game.applicableRules(state)
 
     for rule in rules:
-        newState = state.applyRule(rule)
-        newStateList = stateList.insert(0, newState)
-        path = backTrack(newStateList)
-    #
-    #
-    # if rule not in selectedRules:
-    #     selectedRules.append(rule)
-    #
-    #
-    # if len(rules) < 2:
-    #     if game.goal() and game.softApplyRule(rule):
-    #         return rules
-    #     else:
-    #         print "BackTracking..."
-    #         selectedRules.pop()
-    # else:
-    #     game.applyRule(rule)
-    #
-    # return backTrack(allChoices)
+        # game.refBoard()
+        newState = game.applyRule(rule, state)
+        game.describeState(state)
+        game.describeRule(rule)
+        stateList.insert(0, newState)
+        path = backTrack(stateList)
+        if path != False:
+            return path.append(rule)
+            path = True
+
+
+    return False
+
 
 
 game = Game()
 game.refBoard()
-backTrack([game])
+backTrack([game.boardState])
 
 
 
